@@ -18,7 +18,7 @@ Solução para a competição [Natural Language Processing with Disaster Tweets]
 
 ```
 disaster-tweets-kaggle/
-├── disaster_tweets_julianaburato.ipynb
+├── identificacao_tweets_desastres.ipynb
 ├── README.md
 └── submission.csv
 ```
@@ -69,7 +69,7 @@ Cada tweet é representado pela **média dos vetores** de seus tokens.
 
 | Parâmetro | Valor | Justificativa |
 |---|---|---|
-| `vector_size` | 200 | Maior capacidade semântica vs. versão anterior (100d) |
+| `vector_size` | 200 | Maior capacidade semântica |
 | `window` | 5 | Captura contexto local dos tweets |
 | `min_count` | 1 | Mantém tokens raros — corpus pequeno, todo token importa |
 | `epochs` | 20 | Mais passagens pelo corpus = embeddings mais refinados |
@@ -90,14 +90,27 @@ Métrica: **F1-Score** — mais adequado que acurácia para classes desbalancead
 
 ### 6. Ensemble — Soft Voting
 
-VotingClassifier combina os três modelos pela média das probabilidades (soft voting).  
-O StandardScaler está dentro de cada Pipeline — normalização feita por fold, sem data leakage.
+`VotingClassifier` combina os três modelos pela média das probabilidades (soft voting).  
+O `StandardScaler` está dentro de cada `Pipeline` — normalização feita por fold, sem data leakage.
 
 ### 7. Avaliação
 
 - F1-Score avaliado com StratifiedKFold (5 folds) — preserva proporção das classes em cada fold
 - Matriz de confusão e relatório de classificação do ensemble
 - Modelo retreinado no conjunto completo antes de gerar o submission
+
+---
+
+## Conclusão
+
+O modelo ensemble com Soft Voting atingiu **F1-Score de 0,803** no Kaggle, demonstrando que a combinação de embeddings semânticos com features estruturais do tweet é uma abordagem eficaz para classificação de texto em domínios específicos.
+
+Os principais fatores que contribuíram para o resultado:
+
+- **Word2Vec (Skip-gram, 200d):** embeddings treinados no corpus completo capturam relações semânticas específicas do domínio de desastres
+- **Feature Engineering:** metadados como `keyword_encoded`, comprimento do tweet e contagem de maiúsculas adicionam informação estrutural que os embeddings não capturam
+- **Soft Voting:** a combinação dos três modelos foi mais robusta do que qualquer modelo individual
+- **Pipeline com StandardScaler:** a normalização dentro de cada fold do cross-validation garantiu avaliação sem data leakage
 
 ---
 
@@ -110,5 +123,7 @@ O StandardScaler está dentro de cada Pipeline — normalização feita por fold
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-F7931E?style=flat&logo=scikit-learn&logoColor=white)
 
 ---
+
+*Juliana Burato — 2026*
 
 *Juliana Burato — 2026*
